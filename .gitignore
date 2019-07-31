@@ -124,6 +124,4 @@ fabric.properties
 .idea/nichijou.iml
 .idea/webServers.xml
 .idea/deployment.xml
-*_cpu/
-*_gpu/
 scripts/
