@@ -32,7 +32,7 @@ RUN wget -O /tmp/Python-3.6.8.tgz https://npm.taobao.org/mirrors/python//3.6.8/P
         cd /tmp && tar -xzvf Python-3.6.8.tgz && \
         cd Python-3.6.8 && \
         ./configure --enable-optimizations && \
-        make -j8 && \
+        make -j32 && \
         make altinstall && \
         rm /tmp/Python-3.6.8.tgz && \
         rm -rf /tmp/Python-3.6.8 && \

@@ -32,7 +32,7 @@ RUN wget -O /tmp/Python-{{ python_version }}.tgz {{ python }}/{{ python_version 
         cd /tmp && tar -xzvf Python-{{ python_version }}.tgz && \
         cd Python-{{ python_version }} && \
         ./configure --enable-optimizations && \
-        make -j8 && \
+        make -j32 && \
         make altinstall && \
         rm /tmp/Python-{{ python_version }}.tgz && \
         rm -rf /tmp/Python-{{ python_version }} && \
