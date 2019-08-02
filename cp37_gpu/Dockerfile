@@ -41,7 +41,7 @@ RUN wget -O /tmp/Python-3.7.3.tgz https://npm.taobao.org/mirrors/python//3.7.3/P
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     python --version && \
-    cd /root && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+    cd /root && pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
 RUN pip install --upgrade pip cython --no-cache-dir
 
