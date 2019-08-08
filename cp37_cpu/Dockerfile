@@ -54,7 +54,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
                                matplotlib seaborn pandas scipy autopep8 jupyter \
                                jupyterlab numpy jupyter_nbextensions_configurator \
                                loguru numba bidict coverage click sklearn dill pathos \
-                               joblib diskcache jupyterlab \
+                               joblib diskcache jupyterlab visdom\
                                networkx tqdm pygraphviz elasticsearch loguru pytest pipenv\
                                tensorflow keras && \
     (pip uninstall -y pillow; CC="cc -mavx2" pip install -U --force-reinstall "pillow-simd==6.0.0.post0") && \
