@@ -1,5 +1,9 @@
 ## About this docker
-1. Install python and common used packages: numpy, scipy, pytorch, matplotlib, tensorflow...
+Install python and common used packages: numpy, scipy, pytorch, matplotlib, tensorflow...
+Built images at Docker Hub: https://cloud.docker.com/repository/docker/lizytalk/nichijou
+"""
+docker pull lizytalk/nichijou:{tag}
+"""
 ## Build this docker
 1. change the parameters in render.py
 2. `python render.py`
