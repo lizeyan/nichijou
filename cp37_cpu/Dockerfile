@@ -4,6 +4,8 @@ FROM ubuntu:18.04
 ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/local/nvidia/lib64:/usr/local/nvidia/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib:${LD_LIBRARY_PATH}"
 ENV TZ=Asia/Shanghai
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.TUF-8
 RUN echo '\
 deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse\n\
 deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse\n\
@@ -32,7 +34,7 @@ RUN wget -O /tmp/Python-3.7.3.tgz https://npm.taobao.org/mirrors/python//3.7.3/P
         cd /tmp && tar -xzvf Python-3.7.3.tgz && \
         cd Python-3.7.3 && \
         ./configure --enable-optimizations && \
-        make -j32 && \
+        make -j12 && \
         make altinstall && \
         rm /tmp/Python-3.7.3.tgz && \
         rm -rf /tmp/Python-3.7.3 && \
@@ -46,20 +48,30 @@ RUN wget -O /tmp/Python-3.7.3.tgz https://npm.taobao.org/mirrors/python//3.7.3/P
 RUN pip install --upgrade pip cython --no-cache-dir
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends graphviz libgraphviz-dev && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        graphviz libgraphviz-dev nodejs npm curl && \
     pip install --no-cache-dir --upgrade torch torchvision pytorch-ignite \
-                               pillow-simd matplotlib seaborn pandas scipy autopep8 jupyter \
+                               matplotlib seaborn pandas scipy autopep8 jupyter \
                                jupyterlab numpy jupyter_nbextensions_configurator \
                                loguru numba bidict coverage click sklearn dill pathos \
                                joblib diskcache jupyterlab \
-                               networkx tqdm pygraphviz elasticsearch loguru pytest \
+                               networkx tqdm pygraphviz elasticsearch loguru pytest pipenv\
                                tensorflow keras && \
-    cd /srv && git clone https://github.com/thu-ml/zhusuan.git && cd zhusuan && pip install . \
-    && \
+    (pip uninstall -y pillow; CC="cc -mavx2" pip install -U --force-reinstall "pillow-simd==6.0.0.post0") && \
+    cd /srv && git clone https://github.com/thu-ml/zhusuan.git && cd zhusuan && pip install . && \
+    jupyter nbextensions_configurator enable --system && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-RUN jupyter nbextensions_configurator enable --user
+
+RUN jupyter labextension install --no-build @jupyterlab/toc && \
+    jupyter labextension install --no-build @telamonian/theme-darcula && \
+    jupyter labextension install --no-build jupyterlab_vim && \
+    jupyter labextension install --no-build jupyterlab-spreadsheet && \
+    jupyter labextension install --no-build @aquirdturtle/collapsible_headings && \
+    jupyter lab build && \
+    curl -Lo install.sh https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh && \
+    sh install.sh
 
 
 CMD ["/usr/bin/zsh"]
