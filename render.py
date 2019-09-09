@@ -16,6 +16,7 @@ tag_kwargs = {
         'docker_image': 'lizytalk/nichijou',
         'python_major_version': '3.6',
         'python_version': '3.6.8',
+        "code_server": 'code-server1.1156-vsc1.33.1-linux-x64',
     },
     'cp37': {
         'users': [{'uid': 10037, 'username': 'lizytalk'}, ],
@@ -28,6 +29,7 @@ tag_kwargs = {
         'docker_image': 'lizytalk/nichijou',
         'python_major_version': '3.7',
         'python_version': '3.7.3',
+        "code_server": 'code-server1.1156-vsc1.33.1-linux-x64',
     },
 }
 

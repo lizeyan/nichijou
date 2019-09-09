@@ -5,5 +5,5 @@ docker_exec={% if gpu %}nvidia-docker{% else %}docker{% endif %}
 tag={{ docker_image }}:{{ tag }}_{% if gpu %}gpu{% else %}cpu{% endif %}
 CONTEXT=$(realpath $(dirname "$0"))
 sudo ${docker_exec} pull ${tag}
-sudo ${docker_exec} build ${CONTEXT} ${BUILD_ARGS} -t ${tag}
+sudo ${docker_exec} build ${CONTEXT} ${BUILD_ARGS} -t ${tag} --dns 101.6.6.6
 sudo ${docker_exec} push ${tag}

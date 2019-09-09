@@ -45,33 +45,36 @@ RUN wget -O /tmp/Python-{{ python_version }}.tgz {{ python }}/{{ python_version 
     python --version && \
     cd /root && pip config set global.index-url {{ pypi }}
 
-RUN pip install --upgrade pip cython --no-cache-dir
-
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
+RUN pip install --upgrade pip cython --no-cache-dir && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         graphviz libgraphviz-dev nodejs npm curl && \
-    pip install --no-cache-dir --upgrade torch torchvision pytorch-ignite \
+    pip install --no-cache-dir --upgrade torch torchvision pytorch-ignite pyro-ppl \
                                matplotlib seaborn pandas scipy autopep8 jupyter \
                                jupyterlab numpy jupyter_nbextensions_configurator \
                                loguru numba bidict coverage click sklearn dill pathos \
-                               joblib diskcache jupyterlab visdom\
+                               joblib diskcache jupyterlab \
                                networkx tqdm pygraphviz elasticsearch loguru pytest pipenv\
                                tensorflow{% if gpu %}-gpu{% else %}{% endif %} keras && \
     (pip uninstall -y pillow; CC="cc -mavx2" pip install -U --force-reinstall "pillow-simd==6.0.0.post0") && \
+    cd /srv && git clone https://github.com/facebookresearch/visdom.git && cd visdom && pip install -e . && \
     cd /srv && git clone https://github.com/thu-ml/zhusuan.git && cd zhusuan && pip install . && \
     jupyter nbextensions_configurator enable --system && \
     apt-get autoremove -y && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN jupyter labextension install --no-build @jupyterlab/toc && \
+    rm -rf /var/lib/apt/lists/* && \
+    jupyter labextension install --no-build @jupyterlab/toc && \
     jupyter labextension install --no-build @telamonian/theme-darcula && \
     jupyter labextension install --no-build jupyterlab_vim && \
     jupyter labextension install --no-build jupyterlab-spreadsheet && \
     jupyter labextension install --no-build @aquirdturtle/collapsible_headings && \
     jupyter lab build && \
     curl -Lo install.sh https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh && \
-    sh install.sh
+    sh install.sh && \
+    wget https://github.com/cdr/code-server/releases/download/1.1156-vsc1.33.1/{{ code_server }}.tar.gz && \
+    tar -xzf {{ code_server }}.tar.gz -C /usr/local/ && \
+    ln -s /usr/local/{{ code_server }}/code-server /usr/local/bin && \
+    jupyter notebook --generate-config
 
 
 CMD ["/usr/bin/zsh"]
