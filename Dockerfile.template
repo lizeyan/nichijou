@@ -5,7 +5,7 @@ ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/local/nvidia/lib64:/usr/local/nvidia/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib:${LD_LIBRARY_PATH}"
 ENV TZ=Asia/Shanghai
 ENV LANG=C.UTF-8
-ENV LC_ALL=C.TUF-8
+ENV LC_ALL=C.UTF-8
 RUN echo '\
 deb {{ ubuntu }} bionic main restricted universe multiverse\n\
 deb {{ ubuntu }} bionic-updates main restricted universe multiverse\n\
