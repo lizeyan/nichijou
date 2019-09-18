@@ -46,11 +46,13 @@ RUN wget -O /tmp/Python-3.7.3.tgz https://npm.taobao.org/mirrors/python//3.7.3/P
     cd /root && pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
 RUN pip install --upgrade pip cython --no-cache-dir && \
+    jupyter notebook --generate-config && \
     DEBIAN_FRONTEND=noninteractive apt-get -y update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         graphviz libgraphviz-dev nodejs npm curl && \
     pip install --no-cache-dir --upgrade torch torchvision pytorch-ignite pyro-ppl \
                                matplotlib seaborn pandas scipy autopep8 jupyter \
+                               jupyter_contrib_nbextensions \
                                jupyterlab numpy jupyter_nbextensions_configurator \
                                loguru numba bidict coverage click sklearn dill pathos \
                                joblib diskcache jupyterlab \
@@ -73,8 +75,7 @@ RUN pip install --upgrade pip cython --no-cache-dir && \
     sh install.sh && \
     wget https://github.com/cdr/code-server/releases/download/1.1156-vsc1.33.1/code-server1.1156-vsc1.33.1-linux-x64.tar.gz && \
     tar -xzf code-server1.1156-vsc1.33.1-linux-x64.tar.gz -C /usr/local/ && \
-    ln -s /usr/local/code-server1.1156-vsc1.33.1-linux-x64/code-server /usr/local/bin && \
-    jupyter notebook --generate-config
+    ln -s /usr/local/code-server1.1156-vsc1.33.1-linux-x64/code-server /usr/local/bin
 
 
 CMD ["/usr/bin/zsh"]
