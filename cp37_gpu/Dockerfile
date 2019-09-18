@@ -30,14 +30,14 @@ RUN cat /etc/apt/sources.list && echo ln -snf /usr/share/zoneinfo/$TZ /etc/local
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN wget -O /tmp/Python-3.7.3.tgz https://npm.taobao.org/mirrors/python//3.7.3/Python-3.7.3.tgz  && \
-        cd /tmp && tar -xzvf Python-3.7.3.tgz && \
-        cd Python-3.7.3 && \
+RUN wget -O /tmp/Python-3.7.4.tgz https://npm.taobao.org/mirrors/python//3.7.4/Python-3.7.4.tgz  && \
+        cd /tmp && tar -xzvf Python-3.7.4.tgz && \
+        cd Python-3.7.4 && \
         ./configure --enable-optimizations && \
-        make -j12 && \
+        make -j16 && \
         make altinstall && \
-        rm /tmp/Python-3.7.3.tgz && \
-        rm -rf /tmp/Python-3.7.3 && \
+        rm /tmp/Python-3.7.4.tgz && \
+        rm -rf /tmp/Python-3.7.4 && \
     ln -sf /usr/local/bin/python3.7 /usr/bin/python && \
     ln -sf /usr/local/bin/pip3.7 /usr/bin/pip && \
     apt-get clean && \
@@ -45,8 +45,7 @@ RUN wget -O /tmp/Python-3.7.3.tgz https://npm.taobao.org/mirrors/python//3.7.3/P
     python --version && \
     cd /root && pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
-RUN pip install --upgrade pip cython --no-cache-dir && \
-    jupyter notebook --generate-config && \
+RUN pip install --upgrade pip cython setuptools attrs pytest tables --no-cache-dir && \
     DEBIAN_FRONTEND=noninteractive apt-get -y update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         graphviz libgraphviz-dev nodejs npm curl && \
@@ -58,8 +57,9 @@ RUN pip install --upgrade pip cython --no-cache-dir && \
                                joblib diskcache jupyterlab \
                                networkx tqdm pygraphviz elasticsearch loguru pytest pipenv\
                                tensorflow-gpu keras && \
+    jupyter notebook --generate-config && \
     (pip uninstall -y pillow; CC="cc -mavx2" pip install -U --force-reinstall "pillow-simd==6.0.0.post0") && \
-    cd /srv && git clone https://github.com/facebookresearch/visdom.git && cd visdom && pip install -e . && \
+    pip install visdom && \
     cd /srv && git clone https://github.com/thu-ml/zhusuan.git && cd zhusuan && pip install . && \
     jupyter nbextensions_configurator enable --system && \
     apt-get autoremove -y && \

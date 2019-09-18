@@ -15,7 +15,7 @@ tag_kwargs = {
 	'python': 'https://npm.taobao.org/mirrors/python/',
         'docker_image': 'lizytalk/nichijou',
         'python_major_version': '3.6',
-        'python_version': '3.6.8',
+        'python_version': '3.6.9',
         "code_server": 'code-server1.1156-vsc1.33.1-linux-x64',
     },
     'cp37': {
@@ -28,7 +28,7 @@ tag_kwargs = {
 	'python': 'https://npm.taobao.org/mirrors/python/',
         'docker_image': 'lizytalk/nichijou',
         'python_major_version': '3.7',
-        'python_version': '3.7.3',
+        'python_version': '3.7.4',
         "code_server": 'code-server1.1156-vsc1.33.1-linux-x64',
     },
 }
