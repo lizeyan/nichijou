@@ -58,6 +58,7 @@ RUN pip install --upgrade pip cython setuptools attrs pytest tables --no-cache-d
                                networkx tqdm pygraphviz elasticsearch loguru pytest pipenv\
                                tensorflow keras && \
     jupyter notebook --generate-config && \
+    jupyter contrib nbextension install --system && \
     (pip uninstall -y pillow; CC="cc -mavx2" pip install -U --force-reinstall "pillow-simd==6.0.0.post0") && \
     pip install visdom && \
     cd /srv && git clone https://github.com/thu-ml/zhusuan.git && cd zhusuan && pip install . && \
