@@ -4,6 +4,8 @@ FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
 ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/local/nvidia/lib64:/usr/local/nvidia/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib:${LD_LIBRARY_PATH}"
 ENV TZ=Asia/Shanghai
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 RUN echo '\
 deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse\n\
 deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse\n\
@@ -28,38 +30,53 @@ RUN cat /etc/apt/sources.list && echo ln -snf /usr/share/zoneinfo/$TZ /etc/local
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN wget -O /tmp/Python-3.6.8.tgz https://npm.taobao.org/mirrors/python//3.6.8/Python-3.6.8.tgz  && \
-        cd /tmp && tar -xzvf Python-3.6.8.tgz && \
-        cd Python-3.6.8 && \
+RUN wget -O /tmp/Python-3.6.9.tgz https://npm.taobao.org/mirrors/python//3.6.9/Python-3.6.9.tgz  && \
+        cd /tmp && tar -xzvf Python-3.6.9.tgz && \
+        cd Python-3.6.9 && \
         ./configure --enable-optimizations && \
-        make -j32 && \
+        make -j16 && \
         make altinstall && \
-        rm /tmp/Python-3.6.8.tgz && \
-        rm -rf /tmp/Python-3.6.8 && \
+        rm /tmp/Python-3.6.9.tgz && \
+        rm -rf /tmp/Python-3.6.9 && \
     ln -sf /usr/local/bin/python3.6 /usr/bin/python && \
     ln -sf /usr/local/bin/pip3.6 /usr/bin/pip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     python --version && \
-    cd /root && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+    cd /root && pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
-RUN pip install --upgrade pip cython --no-cache-dir
-
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends graphviz libgraphviz-dev && \
-    pip install --no-cache-dir --upgrade torch torchvision pytorch-ignite \
-                               pillow-simd matplotlib seaborn pandas scipy autopep8 jupyter \
+RUN pip install --upgrade pip cython setuptools attrs pytest tables --no-cache-dir && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        graphviz libgraphviz-dev nodejs npm curl && \
+    pip install --no-cache-dir --upgrade torch torchvision pytorch-ignite pyro-ppl \
+                               matplotlib seaborn pandas scipy autopep8 jupyter \
+                               jupyter_contrib_nbextensions \
                                jupyterlab numpy jupyter_nbextensions_configurator \
                                loguru numba bidict coverage click sklearn dill pathos \
                                joblib diskcache jupyterlab \
-                               networkx tqdm pygraphviz elasticsearch loguru pytest \
+                               networkx tqdm pygraphviz elasticsearch loguru pytest pipenv\
                                tensorflow-gpu keras && \
-    cd /srv && git clone https://github.com/thu-ml/zhusuan.git && cd zhusuan && pip install . \
-    && \
+    jupyter notebook --generate-config && \
+    jupyter contrib nbextension install --system && \
+    (pip uninstall -y pillow; CC="cc -mavx2" pip install -U --force-reinstall "pillow-simd==6.0.0.post0") && \
+    pip install visdom && \
+    cd /srv && git clone https://github.com/thu-ml/zhusuan.git && cd zhusuan && pip install . && \
+    jupyter nbextensions_configurator enable --system && \
     apt-get autoremove -y && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-RUN jupyter nbextensions_configurator enable --user
+    rm -rf /var/lib/apt/lists/* && \
+    jupyter labextension install --no-build @jupyterlab/toc && \
+    jupyter labextension install --no-build @telamonian/theme-darcula && \
+    jupyter labextension install --no-build jupyterlab_vim && \
+    jupyter labextension install --no-build jupyterlab-spreadsheet && \
+    jupyter labextension install --no-build @aquirdturtle/collapsible_headings && \
+    jupyter lab build && \
+    curl -Lo install.sh https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh && \
+    sh install.sh && \
+    wget https://github.com/cdr/code-server/releases/download/1.1156-vsc1.33.1/code-server1.1156-vsc1.33.1-linux-x64.tar.gz && \
+    tar -xzf code-server1.1156-vsc1.33.1-linux-x64.tar.gz -C /usr/local/ && \
+    ln -s /usr/local/code-server1.1156-vsc1.33.1-linux-x64/code-server /usr/local/bin
 
 
 CMD ["/usr/bin/zsh"]
