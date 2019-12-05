@@ -13,7 +13,6 @@ for device in ('cpu', 'gpu'):
 with ThreadPoolExecutor(max_workers=10) as pool:
     pool.map(lambda job: call(job, shell=True), jobs)
 
-jobs = []
-jobs.append("cd {cwd}/visdom && bash build-docker.sh".format(cwd=cwd, tag=tag, device=device))
+jobs = ["cd {cwd}/visdom && bash build-docker.sh".format(cwd=cwd)]
 with ThreadPoolExecutor(max_workers=10) as pool:
     pool.map(lambda job: call(job, shell=True), jobs)

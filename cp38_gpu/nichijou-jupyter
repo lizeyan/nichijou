@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+docker_exec=nichijou-gpu
+cmd="jupyter notebook --notebook-dir=/home/lizytalk/ --ip=0.0.0.0"
+params='--name lzy-jupyter -p 10666:8888 --ipc host -d --restart always'
+${docker_exec} "${cmd}" "${params}"
