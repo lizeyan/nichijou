@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 BUILD_ARGS=${@}
-docker_exec=nvidia-docker
+docker_exec=docker
 tag=lizytalk/nichijou:cp37_gpu
 CONTEXT=$(realpath $(dirname "$0"))
 sudo ${docker_exec} pull ${tag}

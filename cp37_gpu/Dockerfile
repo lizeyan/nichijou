@@ -30,14 +30,14 @@ RUN cat /etc/apt/sources.list && echo ln -snf /usr/share/zoneinfo/$TZ /etc/local
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN wget -O /tmp/Python-3.7.4.tgz https://npm.taobao.org/mirrors/python//3.7.4/Python-3.7.4.tgz  && \
-        cd /tmp && tar -xzvf Python-3.7.4.tgz && \
-        cd Python-3.7.4 && \
+RUN wget -O /tmp/Python-3.7.5.tgz https://npm.taobao.org/mirrors/python//3.7.5/Python-3.7.5.tgz  && \
+        cd /tmp && tar -xzvf Python-3.7.5.tgz && \
+        cd Python-3.7.5 && \
         ./configure --enable-optimizations && \
         make -j16 && \
         make altinstall && \
-        rm /tmp/Python-3.7.4.tgz && \
-        rm -rf /tmp/Python-3.7.4 && \
+        rm /tmp/Python-3.7.5.tgz && \
+        rm -rf /tmp/Python-3.7.5 && \
     ln -sf /usr/local/bin/python3.7 /usr/bin/python && \
     ln -sf /usr/local/bin/pip3.7 /usr/bin/pip && \
     apt-get clean && \

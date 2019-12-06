@@ -6,6 +6,6 @@ user=
 tag=lizytalk/nichijou:cp38_cpu
 echo cmd: ${cmd}
 echo extra params: ${extra_params}
-cmd="sudo ${docker_exec} run -it --user $(id -u) ${extra_params} -v /home/${user}:/home/${user} -e USERNAME=${user} ${tag} ${cmd}"
+cmd="sudo ${docker_exec}  run -it --user $(id -u) ${extra_params} -v /home/${user}:/home/${user} -e USERNAME=${user} ${tag} ${cmd}"
 echo ${cmd}
 ${cmd}
