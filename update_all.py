@@ -6,10 +6,11 @@ from concurrent.futures import ThreadPoolExecutor
 
 cwd = Path(__file__).parent
 
+os.system("python render.py")
+
 jobs = []
-for device in ('cpu', 'gpu'):
-    for tag, kwargs in tag_kwargs.items():
-        jobs.append("cd {cwd}/{tag}_{device} && bash build-docker.sh".format(cwd=cwd, tag=tag, device=device))
+for tag, kwargs in tag_kwargs.items():
+    jobs.append("cd {cwd}/{tag} && bash build-docker.sh".format(cwd=cwd, tag=tag, device=device))
 
 with ThreadPoolExecutor(max_workers=10) as pool:
     pool.map(lambda job: call(job, shell=True), jobs)
