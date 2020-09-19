@@ -41,7 +41,7 @@ tag_kwargs = {
         'python': 'https://npm.taobao.org/mirrors/python/',
         'docker_image': 'lizytalk/nichijou',
         'python_major_version': '3.8',
-        'python_version': '3.8.0',
+        'python_version': '3.8.1',
         "code_server": 'code-server1.1156-vsc1.33.1-linux-x64',
     },
 }

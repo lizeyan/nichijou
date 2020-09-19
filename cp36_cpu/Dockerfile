@@ -1,3 +1,4 @@
+# syntax = docker/dockerfile:1.0-experimental
 FROM ubuntu:18.04
 
 # set apt and install apt packages
@@ -12,7 +13,7 @@ deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted u
 deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse\n\
 deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse\n' > /etc/apt/sources.list
 
-RUN cat /etc/apt/sources.list && echo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+RUN --mount=type=cache,target=/root/.cache/pip --mount=type=cache,target=/var/cache cat /etc/apt/sources.list && echo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     chsh -s /bin/bash && \
     DEBIAN_FRONTEND=noninteractive apt-get -y update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade && \
@@ -26,9 +27,21 @@ RUN cat /etc/apt/sources.list && echo ln -snf /usr/share/zoneinfo/$TZ /etc/local
         libnlopt-dev libpq-dev libffi-dev libcairo-dev libedit-dev \
         libcurl4-nss-dev libsasl2-dev libsasl2-modules libapr1-dev libsvn-dev \
         python-dev python-pip libjpeg-dev htop sudo zsh liblapack-dev libatlas-base-dev ssh zookeeper \
+        graphviz libgraphviz-dev curl \
     && \
+    (curl -sL https://deb.nodesource.com/setup_14.x | bash) && \
+    sed -i "s/https:\/\/deb\.nodesource\.com\/node\//https:\/\/mirrors.tuna.tsinghua.edu.cn\/nodesource\/deb\//g" /etc/apt/sources.list.d/nodesource.list && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# Uses "git", "ssh-agent" and "history-substring-search" bundled plugins
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.1.1/zsh-in-docker.sh)" -- \
+    -p git -p ssh-agent -p 'history-substring-search' \
+    -a 'bindkey "\$terminfo[kcuu1]" history-substring-search-up' \
+    -a 'bindkey "\$terminfo[kcud1]" history-substring-search-down' \
+    -t robbyrussell
 
 RUN wget -O /tmp/Python-3.6.9.tgz https://npm.taobao.org/mirrors/python//3.6.9/Python-3.6.9.tgz  && \
         cd /tmp && tar -xzvf Python-3.6.9.tgz && \
@@ -45,11 +58,8 @@ RUN wget -O /tmp/Python-3.6.9.tgz https://npm.taobao.org/mirrors/python//3.6.9/P
     python --version && \
     cd /root && pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
-RUN pip install --upgrade pip cython setuptools attrs pytest tables --no-cache-dir && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        graphviz libgraphviz-dev nodejs npm curl && \
-    pip install --no-cache-dir --upgrade torch torchvision pytorch-ignite pyro-ppl \
+RUN --mount=type=cache,target=/root/.cache/pip --mount=type=cache,target=/var/cache pip install --upgrade pip cython setuptools attrs pytest tables --no-cache-dir && \
+    pip install --upgrade torch torchvision pytorch-ignite pyro-ppl \
                                matplotlib seaborn pandas scipy autopep8 jupyter \
                                jupyter_contrib_nbextensions \
                                jupyterlab numpy jupyter_nbextensions_configurator \
@@ -68,15 +78,13 @@ RUN pip install --upgrade pip cython setuptools attrs pytest tables --no-cache-d
     rm -rf /var/lib/apt/lists/* && \
     jupyter labextension install --no-build @jupyterlab/toc && \
     jupyter labextension install --no-build @telamonian/theme-darcula && \
-    jupyter labextension install --no-build jupyterlab_vim && \
     jupyter labextension install --no-build jupyterlab-spreadsheet && \
     jupyter labextension install --no-build @aquirdturtle/collapsible_headings && \
-    jupyter lab build && \
-    curl -Lo install.sh https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh && \
-    sh install.sh && \
+    jupyter lab build && \ 
     wget https://github.com/cdr/code-server/releases/download/1.1156-vsc1.33.1/code-server1.1156-vsc1.33.1-linux-x64.tar.gz && \
     tar -xzf code-server1.1156-vsc1.33.1-linux-x64.tar.gz -C /usr/local/ && \
-    ln -s /usr/local/code-server1.1156-vsc1.33.1-linux-x64/code-server /usr/local/bin
+    ln -s /usr/local/code-server1.1156-vsc1.33.1-linux-x64/code-server /usr/local/bin && \
+    rm -rf /root/.cache/pip/*
 
 
 CMD ["/usr/bin/zsh"]

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from render import tag_kwargs
 from subprocess import call
 from pathlib import Path
