@@ -2,7 +2,7 @@
 
 BUILD_ARGS=${@}
 docker_exec=docker
-tag={{ docker_image }}:{{ tag }}_{% if gpu %}gpu{% else %}cpu{% endif %}
+tag={{ docker_image }}:{{ tag }}
 CONTEXT=$(realpath $(dirname "$0"))
 sudo ${docker_exec} pull ${tag}
 sudo ${docker_exec} build ${CONTEXT} ${BUILD_ARGS} -t ${tag} --network host

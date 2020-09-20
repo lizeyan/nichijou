@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.0-experimental
-FROM {{ base }}
+FROM nvidia/cuda:9.2-devel-ubuntu18.04
 
 ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/local/nvidia/lib64:/usr/local/nvidia/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib:${LD_LIBRARY_PATH}"
@@ -24,7 +24,7 @@ RUN --mount=type=cache,target=/root/.cache/pip --mount=type=cache,target=/var/ca
         libnlopt-dev libpq-dev libffi-dev libcairo-dev libedit-dev \
         libcurl4-nss-dev libsasl2-dev libsasl2-modules libapr1-dev libsvn-dev \
         python-dev python-pip libjpeg-dev htop sudo zsh liblapack-dev libatlas-base-dev ssh zookeeper \
-        graphviz libgraphviz-dev curl thefuck direnv \
+        graphviz libgraphviz-dev curl thefuck direnv aria2 \
     && \
     (curl -sL https://deb.nodesource.com/setup_14.x | bash) && \
     sed -i "s/https:\/\/deb\.nodesource\.com\/node\//https:\/\/mirrors.tuna.tsinghua.edu.cn\/nodesource\/deb\//g" /etc/apt/sources.list.d/nodesource.list && \
@@ -33,13 +33,13 @@ RUN --mount=type=cache,target=/root/.cache/pip --mount=type=cache,target=/var/ca
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN groupadd -g {{ group_id }} {{ group }} && \
-    useradd -g {{ group }} -u {{ user_id }} {{ user }} && \
-    mkdir /home/{{ user }} && chown {{ user }}:{{ group }} /home/{{ user }} &&\
-    echo "{{ user }}		ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN groupadd -g 10000 labmen && \
+    useradd -g labmen -u 10037 lizytalk && \
+    mkdir /home/lizytalk && chown lizytalk:labmen /home/lizytalk &&\
+    echo "lizytalk		ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 USER lizytalk:labmen
-WORKDIR /home/{{ user }}
+WORKDIR /home/lizytalk
 
 # install zsh
 # Uses "git", "ssh-agent" and "history-substring-search" bundled plugins
@@ -51,7 +51,7 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 
 # install pyenv
 RUN curl https://pyenv.run | bash && \
-    printf 'export PATH="/home/{{ user }}/.pyenv/bin:$PATH" \neval "$(pyenv init -)" \neval "$(pyenv virtualenv-init -)"\n' >> ~/.zshrc
+    printf 'export PATH="/home/lizytalk/.pyenv/bin:$PATH" \neval "$(pyenv init -)" \neval "$(pyenv virtualenv-init -)"\n' >> ~/.zshrc
 # set pyenv done
 
 

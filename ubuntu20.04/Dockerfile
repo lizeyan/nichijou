@@ -24,7 +24,7 @@ RUN --mount=type=cache,target=/root/.cache/pip --mount=type=cache,target=/var/ca
         libnlopt-dev libpq-dev libffi-dev libcairo-dev libedit-dev \
         libcurl4-nss-dev libsasl2-dev libsasl2-modules libapr1-dev libsvn-dev \
         python-dev python-pip libjpeg-dev htop sudo zsh liblapack-dev libatlas-base-dev ssh zookeeper \
-        graphviz libgraphviz-dev curl thefuck direnv \
+        graphviz libgraphviz-dev curl thefuck direnv aria2 \
     && \
     (curl -sL https://deb.nodesource.com/setup_14.x | bash) && \
     sed -i "s/https:\/\/deb\.nodesource\.com\/node\//https:\/\/mirrors.tuna.tsinghua.edu.cn\/nodesource\/deb\//g" /etc/apt/sources.list.d/nodesource.list && \
