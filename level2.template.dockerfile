@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1.0-experimental
+#syntax=docker/dockerfile-upstream:master-experimental
 FROM {{ base }}
 
 ENV PATH="/home{{ user }}/.pyenv/bin/:/usr/local/cuda/bin:/usr/bin/:${PATH}"
@@ -12,7 +12,8 @@ ARG HOME=/home/{{ user }}
 USER lizytalk:labmen
 WORKDIR /home/{{ user }}
 
-RUN --mount=type=cache,target=${HOME}/.cache/pip --mount=type=cache,target=${HOME}/.pyenv \
+RUN --mount=type=cache,uid={{ user_id }},target=/home/{{ user }}/.cache/pip --mount=type=cache,target=/home/{{ user }}/.pyenv/cache \
+    sudo chown -R lizytalk /home/{{ user }}/.cache/pip && sudo chown -R lizytalk /home/{{ user }}/.pyenv/cache && \
     zsh -c " \
     source ${HOME}/.zshrc && \
     aria2c https://npm.taobao.org/mirrors/python/{{ python_version }}/Python-{{ python_version }}.tar.xz -x 10 -k 1M --dir ${HOME}/.pyenv/cache/ && \
