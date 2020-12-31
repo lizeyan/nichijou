@@ -60,7 +60,9 @@ RUN bash zsh-in-docker.sh \
 # install pyenv and setup zshrc
 RUN bash pyenv.run && \
     (printf 'export PATH="/home/lizytalk/.pyenv/bin:$PATH" \neval "$(pyenv init -)" \neval "$(pyenv virtualenv-init -)"\n' >> ~/.zshrc) && \
-    (printf 'eval "$(direnv hook zsh)"' >> ~/.zshrc)
+    (printf 'eval "$(direnv hook zsh)"' >> ~/.zshrc) && \
+    (printf 'DISABLE_AUTO_UPDATE="true"' >> ~/.zshrc)
+
 
 
 CMD ["/usr/bin/zsh"]
