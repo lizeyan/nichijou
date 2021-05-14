@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.0-experimental
-FROM {{ base }}
+FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 
 ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/local/nvidia/lib64:/usr/local/nvidia/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib:${LD_LIBRARY_PATH}"
@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/root/.cache/pip --mount=type=cache,target=/var/ca
         libnlopt-dev libpq-dev libffi-dev libcairo-dev libedit-dev \
         libcurl4-nss-dev libsasl2-dev libsasl2-modules libapr1-dev libsvn-dev \
         python-dev python-pip libjpeg-dev htop sudo zsh liblapack-dev libatlas-base-dev ssh zookeeper \
-        graphviz libgraphviz-dev curl thefuck direnv aria2 jq \
+        graphviz libgraphviz-dev curl thefuck direnv aria2 jq texlive \
     && \
     (curl -sL https://deb.nodesource.com/setup_14.x | bash) && \
     sed -i "s/https:\/\/deb\.nodesource\.com\/node\//https:\/\/mirrors.tuna.tsinghua.edu.cn\/nodesource\/deb\//g" /etc/apt/sources.list.d/nodesource.list && \
@@ -35,18 +35,21 @@ RUN --mount=type=cache,target=/root/.cache/pip --mount=type=cache,target=/var/ca
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN groupadd -g {{ group_id }} {{ group }} && \
-    useradd -g {{ group }} -u {{ user_id }} {{ user }} && \
-    mkdir /home/{{ user }} && chown {{ user }}:{{ group }} /home/{{ user }} &&\
-    echo "{{ user }}		ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN groupadd -g 10000 labmen && \
+    useradd -g labmen -u 10037 lizytalk && \
+    mkdir /home/lizytalk && chown lizytalk:labmen /home/lizytalk &&\
+    echo "lizytalk		ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-USER {{ user }}:{{ group }}
-WORKDIR /home/{{ user }}
+USER lizytalk:labmen
+WORKDIR /home/lizytalk
 
-{% for item in files %}
-ADD {{ item.name }} /home/{{ user }}/{{ item.name }}
-RUN sudo chown {{ user }}:{{ group }} /home/{{ user }}/{{ item.name }}
-{% endfor %}
+
+ADD zsh-in-docker.sh /home/lizytalk/zsh-in-docker.sh
+RUN sudo chown lizytalk:labmen /home/lizytalk/zsh-in-docker.sh
+
+ADD pyenv.run /home/lizytalk/pyenv.run
+RUN sudo chown lizytalk:labmen /home/lizytalk/pyenv.run
+
 
 
 # install zsh
