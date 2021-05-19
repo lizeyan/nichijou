@@ -28,11 +28,17 @@ RUN --mount=type=cache,uid=10037,target=/home/lizytalk/.cache/pip --mount=type=c
     pip install -U pip && \
     pip install -U xeus-python && \
     pip install numpy scipy statsmodels matplotlib seaborn pandas jupyter jupyterlab \
-                jupyter_contrib_nbextensions jupyter_nbextensions_configurator \
+                jupyter_contrib_nbextensions jupyter_nbextensions_configurator plotly \
                  && \
     jupyter notebook --generate-config && \
     jupyter contrib nbextension install --user && \
     jupyter nbextensions_configurator enable --user && \
+    pip install jupyterlab-notifications && \
+    pip install aquirdturtle_collapsible_headings && \
+    pip install ipywidgets && \
+    pip install jupyterlab_execute_time && \
+    pip install lckr-jupyterlab-variableinspector && \
+    pip install ipympl && \
     jupyter lab build"
 
 CMD ["/usr/bin/zsh"]
