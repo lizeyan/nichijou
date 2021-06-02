@@ -76,7 +76,7 @@ RUN bash pyenv.run
 
 ENV PATH=/home/lizytalk/.pyenv/bin:${PATH}
 
-RUN (printf 'DISABLE_AUTO_UPDATE="true"\n' >> ~/.zshrc) && \
+RUN (sed -i 's/source \$ZSH\/oh-my-zsh.sh/DISABLE_AUTO_UPDATE="true"\n\0/' ~/.zshrc) && \
     (printf '\neval "$(pyenv init --path)" \neval "$(pyenv init -)" \neval "$(pyenv virtualenv-init -)"\n' >> ~/.zshrc) && \
     (printf 'eval "$(direnv hook zsh)"' >> ~/.zshrc) && \
     zsh -c "pyenv versions"
