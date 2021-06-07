@@ -7,6 +7,7 @@ ENV TZ=Asia/Shanghai
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 ARG HOME=/home/lizytalk
+ARG PY_VERSION=3.9.4
 
 
 USER lizytalk:labmen
@@ -16,9 +17,9 @@ RUN --mount=type=cache,uid=10037,target=/home/lizytalk/.cache/pip --mount=type=c
     sudo chown -R lizytalk /home/lizytalk/.cache/pip && sudo chown -R lizytalk /home/lizytalk/.pyenv/cache && \
     zsh -c " \
     pyenv versions && \
-    aria2c https://npm.taobao.org/mirrors/python/3.9.4/Python-3.9.4.tgz -x 10 -k 1M --dir ${HOME}/.pyenv/cache/ && \
-    pyenv install 3.9.4 && \
-    pyenv global 3.9.4"
+    aria2c https://npm.taobao.org/mirrors/python/${PY_VERSION}/Python-${PY_VERSION}.tgz -x 10 -k 1M --dir ${HOME}/.pyenv/cache/ && \
+    pyenv install ${PY_VERSION} && \
+    pyenv global ${PY_VERSION}"
 
 RUN --mount=type=cache,uid=10037,target=/home/lizytalk/.cache/pip --mount=type=cache,target=/home/lizytalk/.pyenv/cache \
     zsh -c "\
@@ -27,11 +28,17 @@ RUN --mount=type=cache,uid=10037,target=/home/lizytalk/.cache/pip --mount=type=c
     pip install -U pip && \
     pip install -U xeus-python && \
     pip install numpy scipy statsmodels matplotlib seaborn pandas jupyter jupyterlab \
-                jupyter_contrib_nbextensions jupyter_nbextensions_configurator \
+                jupyter_contrib_nbextensions jupyter_nbextensions_configurator plotly \
                  && \
     jupyter notebook --generate-config && \
     jupyter contrib nbextension install --user && \
     jupyter nbextensions_configurator enable --user && \
+    pip install jupyterlab-notifications && \
+    pip install aquirdturtle_collapsible_headings && \
+    pip install ipywidgets && \
+    pip install jupyterlab_execute_time && \
+    pip install lckr-jupyterlab-variableinspector && \
+    pip install ipympl && \
     jupyter lab build"
 
 CMD ["/usr/bin/zsh"]
